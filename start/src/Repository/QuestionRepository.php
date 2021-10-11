@@ -27,8 +27,8 @@ class QuestionRepository extends ServiceEntityRepository
     {
 
         return $this->createQueryBuilder('q')
+            ->andWhere('q.askedAt IS NOT NULL')
             ->orderBy('q.askedAt', 'desc')
-            ->setMaxResults(10)
             ->getQuery()
             ->getResult();
     }

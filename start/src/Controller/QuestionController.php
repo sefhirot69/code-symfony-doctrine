@@ -7,6 +7,7 @@ use App\Service\MarkdownHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -27,8 +28,9 @@ class QuestionController extends AbstractController
      */
     public function homepage(EntityManagerInterface $entityManager)
     {
+
         $repository = $entityManager->getRepository(Question::class);
-        $questions = $repository->findAllAskedOrderedByNewest();
+        $questions  = $repository->findAllAskedOrderedByNewest();
 
         return $this->render('question/homepage.html.twig', [
             'questions' => $questions,
@@ -59,7 +61,7 @@ EOF
             $question->setAskedAt(new \DateTime(sprintf('-%d days', rand(1, 100))));
         }
 
-        $question->setQuestion(rand(-20,50));
+        $question->setQuestion(rand(-20, 50));
 
         $entityManager->persist($question);
         $entityManager->flush();
@@ -79,7 +81,37 @@ EOF
             $this->logger->info('We are in debug mode!');
         }
 
-        $answers      = [
+        return $this->renderShow($question);
+    }
+
+    /**
+     * @Route("/questions/{slug}/vote", name="app_question_vote", methods={"POST"})
+     */
+    public function questionVote(Question $question, Request $request): Response
+    {
+
+        $direction = $request->get('direction');
+
+        $votes = $question->getVotes();
+
+        if ($direction === 'up') {
+            $question->setVotes($votes + 1);
+        } elseif ($direction === 'down') {
+            $question->setVotes($votes - 1);
+        }
+
+        return $this->renderShow($question);
+    }
+
+    /**
+     * @param Question $question
+     *
+     * @return Response
+     */
+    public function renderShow(Question $question): Response
+    {
+
+        $answers = [
             'Make sure your cat is sitting `purrrfectly` still 🤣',
             'Honestly, I like furry shoes better than MY cat',
             'Maybe... try saying the spell backwards?',

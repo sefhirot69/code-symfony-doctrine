@@ -81,36 +81,6 @@ EOF
             $this->logger->info('We are in debug mode!');
         }
 
-        return $this->renderShow($question);
-    }
-
-    /**
-     * @Route("/questions/{slug}/vote", name="app_question_vote", methods={"POST"})
-     */
-    public function questionVote(Question $question, Request $request): Response
-    {
-
-        $direction = $request->get('direction');
-
-        $votes = $question->getVotes();
-
-        if ($direction === 'up') {
-            $question->setVotes($votes + 1);
-        } elseif ($direction === 'down') {
-            $question->setVotes($votes - 1);
-        }
-
-        return $this->renderShow($question);
-    }
-
-    /**
-     * @param Question $question
-     *
-     * @return Response
-     */
-    public function renderShow(Question $question): Response
-    {
-
         $answers = [
             'Make sure your cat is sitting `purrrfectly` still 🤣',
             'Honestly, I like furry shoes better than MY cat',
@@ -120,6 +90,27 @@ EOF
         return $this->render('question/show.html.twig', [
             'question' => $question,
             'answers' => $answers,
+        ]);
+    }
+
+    /**
+     * @Route("/questions/{slug}/vote", name="app_question_vote", methods={"POST"})
+     */
+    public function questionVote(Question $question, Request $request, EntityManagerInterface $entityManager): Response
+    {
+
+        $direction = $request->get('direction');
+
+        if ($direction === 'up') {
+            $question->upVote();
+        } elseif ($direction === 'down') {
+            $question->downVote();
+        }
+
+        $entityManager->flush();
+
+        return $this->redirectToRoute('app_question_show', [
+            'slug' => $question->getSlug()
         ]);
     }
 

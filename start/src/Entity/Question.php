@@ -37,18 +37,26 @@ class Question
      */
     private $askedAt;
 
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $votes = 0;
+
     public function getId(): ?int
     {
+
         return $this->id;
     }
 
     public function getName(): ?string
     {
+
         return $this->name;
     }
 
     public function setName(string $name): self
     {
+
         $this->name = $name;
 
         return $this;
@@ -56,11 +64,13 @@ class Question
 
     public function getSlug(): ?string
     {
+
         return $this->slug;
     }
 
     public function setSlug(string $slug): self
     {
+
         $this->slug = $slug;
 
         return $this;
@@ -68,11 +78,13 @@ class Question
 
     public function getQuestion(): ?string
     {
+
         return $this->question;
     }
 
     public function setQuestion(string $question): self
     {
+
         $this->question = $question;
 
         return $this;
@@ -80,13 +92,38 @@ class Question
 
     public function getAskedAt(): ?\DateTimeInterface
     {
+
         return $this->askedAt;
     }
 
     public function setAskedAt(?\DateTimeInterface $askedAt): self
     {
+
         $this->askedAt = $askedAt;
 
         return $this;
     }
+
+    public function getVotes(): ?int
+    {
+
+        return $this->votes;
+    }
+
+    public function getVotesString(): string
+    {
+
+       $prefix = $this->getVotes() >= 0 ? '+' : '-';
+
+        return sprintf('%s %d', $prefix, abs($this->getVotes()));
+    }
+
+    public function setVotes(int $votes): self
+    {
+
+        $this->votes = $votes;
+
+        return $this;
+    }
+
 }

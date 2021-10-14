@@ -4,7 +4,6 @@ namespace App\Factory;
 
 use App\Entity\Question;
 use App\Repository\QuestionRepository;
-use Symfony\Component\String\Slugger\AsciiSlugger;
 use Zenstruck\Foundry\RepositoryProxy;
 use Zenstruck\Foundry\ModelFactory;
 use Zenstruck\Foundry\Proxy;
